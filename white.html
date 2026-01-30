@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Publishing | Premium Book Design & Distribution</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --teal-deep: #093a2c;
+            --teal-pastel-bg: #c3faea98; 
+            --light: #c7c5c5;
+            --text-main: #061805;
+            --nav-height: 80px;
+        }
+
+        body {
+            background-color: var(--teal-pastel-bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Top Offer Ticker */
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            background-color: var(--teal-deep);
+            color: white;
+            padding: 8px 0;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            animation: ticker 40s linear infinite;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Header Redesign - Elite Style */
+        .elite-header {
+            height: var(--nav-height);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link {
+            position: relative;
+            font-weight: 500;
+            font-size: 14px;
+            color: #444;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--teal-deep);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .nav-link:hover {
+            color: var(--teal-deep);
+        }
+
+        /* Hero Image Slider */
+      /* Background Image Slides */
+.hero-image-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    z-index: 0;
+    transition: opacity 1.5s ease-in-out;
+    background-size: cover;
+    background-position: center;
+    /* Adding a subtle scale animation for premium feel */
+    transform: scale(1.1);
+}
+
+.hero-image-slide.active {
+    transform: scale(1);
+    transition: opacity 1.5s ease-in-out, transform 10s linear;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    /* Adjusting the gradient to be more subtle so it doesn't wash out the books */
+    background: linear-gradient(to right, 
+        rgba(50, 115, 95, 0.98) 25%, 
+        rgba(38, 92, 76, 0.6) 60%, 
+        rgba(27, 198, 147, 0.95) 100%);
+}
+
+/* Reveal Animations */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Brand Helpers */
+.bg-teal-brand { background-color: var(--teal-deep); }
+.text-teal-brand { color: var(--teal-deep); }
+
+/* Infinite Book Slider Logic */
+.slider-wrapper { 
+    overflow: hidden; 
+    width: 100%; 
+    position: relative;
+    z-index: 10;
+}
+
+.slider-container {
+    display: flex;
+    width: max-content; /* Critical for infinite loop */
+    animation: scrollAnimation 25s linear infinite;
+}
+
+/* Pause when user wants to look at a cover */
+.slider-container:hover {
+    animation-play-state: paused;
+}
+
+@keyframes scrollAnimation {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); } /* Moves halfway because list is duplicated */
+}
+
+/* Individual Book Cards */
+.book-card-inner {
+    background: white;
+    border-radius: 2px 12px 12px 2px;
+    box-shadow: 10px 20px 40px rgba(0,0,0,0.08);
+    transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+    border-left: 4px solid var(--teal-deep);
+}
+
+.book-card-inner:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 15px 30px 60px rgba(74, 157, 132, 0.2);
+    border-left: 6px solid var(--teal-deep);
+}
+
+/* Object Fit Fix for images inside the cards */
+.book-card-inner img {
+    width: 100%;
+    height: 100%;
+    object-contain: p-2; /* Keeps the full cover visible */
+}
+        /* Testimonial Track */
+        .testimonial-slider {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #auth-modal { display: none; }
+    </style>
+</head>
+<body class="pt-[116px]"> <!-- Offset for ticker + header -->
+
+    <!-- Top Announcement Ticker -->
+    <div class="ticker-wrap fixed top-0 w-full z-[60]">
+        <div class="ticker">
+            <span>Elite Publishing: Exclusive Winter Discount - 25% Off All Formatting Packages • Custom Illustrations Available • Professional KDP Setup Included • Join 500+ Published Authors • &nbsp;</span>
+            <span>Elite Publishing: Exclusive Winter Discount - 25% Off All Formatting Packages • Custom Illustrations Available • Professional KDP Setup Included • Join 500+ Published Authors • &nbsp;</span>
+        </div>
+    </div>
+<br>
+  <header class="fixed top-10 left-0 w-full z-[100] px-4">
+    <div class="max-w-6xl mx-auto bg-white/80 backdrop-blur-md border border-[#4A9D84]/10 h-20 rounded-full px-8 shadow-2xl shadow-black/5 flex justify-between items-center">
+        
+        <a href="#" class="flex items-center space-x-3 group">
+            <div class="w-12 h-12 bg-[#1A1A1A] rounded-full flex items-center justify-center text-white font-serif italic text-2xl transition-all group-hover:bg-[#4A9D84] group-hover:scale-110 shadow-lg">
+                Ep
+            </div>
+            <div class="flex flex-col">
+                <span class="font-bold text-xl tracking-tight leading-none text-[#1A1A1A]">Elite</span>
+                <span class="text-[9px] tracking-[0.4em] font-black text-[#4A9D84] uppercase">Publishing</span>
+            </div>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-8">
+            <a href="#services" class="text-sm font-bold text-[#1A1A1A]/70 hover:text-[#4A9D84] transition-all relative group">
+                Expertise
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#4A9D84] transition-all group-hover:w-full"></span>
+            </a>
+            <a href="#packages" class="text-sm font-bold text-[#1A1A1A]/70 hover:text-[#4A9D84] transition-all relative group">
+                Packages
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#4A9D84] transition-all group-hover:w-full"></span>
+            </a>
+            <a href="#reviews" class="text-sm font-bold text-[#1A1A1A]/70 hover:text-[#4A9D84] transition-all relative group">
+                Author Stories
+                <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#4A9D84] transition-all group-hover:w-full"></span>
+            </a>
+        </nav>
+
+        <div class="flex items-center space-x-6">
+            <button class="hidden lg:block text-xs font-black uppercase tracking-widest text-[#093a2c]/60 hover:text-[#4A9D84] transition">
+                Login
+            </button>
+            <a href="#auth-section" class="bg-[#093a2c] text-white px-7 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#093a2c] transition-all transform hover:scale-105 shadow-lg shadow-[#4A9D84]/20">
+                Start Journey
+            </a>
+        </div>
+        
+        <button class="md:hidden text-[#1A1A1A]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+        </button>
+    </div>
+</header>
+
+ <section class="relative min-h-[85vh] flex items-center overflow-hidden bg-[#EAF4F1]">
+    <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-30" style="background-image: url('image/old.png')"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#EAF4F1] via-transparent to-[#EAF4F1] z-10"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full">
+        <div class="reveal active">
+            <div class="flex items-center space-x-3 mb-6">
+                <span class="w-8 h-[2px] bg-[#4A9D84]"></span>
+                <span class="text-[#093a2c] text-[10px] font-black uppercase tracking-[0.4em]">Elite Publishing</span>
+            </div>
+            <h1 class="serif-title text-5xl md:text-7xl leading-[1.1] mb-6 text-[#1A1A1A]">
+                Publish with <br>
+                <span class="italic font-light text-[#093a2c]">Distinction.</span>
+            </h1>
+            <p class="text-gray-600 text-base md:text-lg max-w-md mb-8 leading-relaxed">
+                Refining raw manuscripts into industry-leading masterpieces with professional typesetting and award-winning design.
+            </p>
+            <button onclick="openAuthModal()" class="bg-[#093a2c] text-white px-8 py-4 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-[#093a2c] transition-all shadow-lg shadow-[#093a2c]/20">
+                Start Your Journey
+            </button>
+        </div>
+
+        <div class="slider-wrapper overflow-hidden relative">
+            <div class="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#EAF4F1] to-transparent z-20"></div>
+            <div class="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#EAF4F1] to-transparent z-20"></div>
+
+            <div class="flex animate-scroll hover:pause-scroll py-6" id="auto-slider">
+                
+                <div class="px-3">
+                    <div class="w-[140px] md:w-[160px] h-[210px] md:h-[240px] relative bg-white rounded-r-md shadow-lg overflow-hidden transition-transform duration-500 hover:-translate-y-2">
+                        <div class="absolute left-0 top-0 h-full w-1.5 bg-[#4A9D84] z-10"></div>
+                        <img src="image/cv1.png" class="w-full h-full object-cover" alt="Book Cover">
+                    </div>
+                </div>
+
+                <div class="px-3">
+                    <div class="w-[140px] md:w-[160px] h-[210px] md:h-[240px] relative bg-white rounded-r-md shadow-lg overflow-hidden transition-transform duration-500 hover:-translate-y-2">
+                        <div class="absolute left-0 top-0 h-full w-1.5 bg-[#1A1A1A] z-10"></div>
+                        <img src="image/cv2.png" class="w-full h-full object-cover" alt="Book Cover">
+                    </div>
+                </div>
+
+                <div class="px-3">
+                    <div class="w-[140px] md:w-[160px] h-[210px] md:h-[240px] relative bg-white rounded-r-md shadow-lg overflow-hidden transition-transform duration-500 hover:-translate-y-2">
+                        <div class="absolute left-0 top-0 h-full w-1.5 bg-[#4A9D84] z-10"></div>
+                        <img src="image/cv3.png" class="w-full h-full object-cover" alt="Book Cover">
+                    </div>
+                </div>
+
+                <div class="px-3">
+                    <div class="w-[140px] md:w-[160px] h-[210px] md:h-[240px] relative bg-white rounded-r-md shadow-lg overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-1.5 bg-[#4A9D84] z-10"></div>
+                        <img src="image/cv4.png" class="w-full h-full object-cover" alt="Book Cover">
+                    </div>
+                </div>
+
+                <div class="px-3">
+                    <div class="w-[140px] md:w-[160px] h-[210px] md:h-[240px] relative bg-white rounded-r-md shadow-lg overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-1.5 bg-[#1A1A1A] z-10"></div>
+                        <img src="image/cv5.png" class="w-full h-full object-cover" alt="Book Cover">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- from -->
+     <section id="auth-section" class="py-24 px-6 lg:px-20 bg-[#093a2c]" >
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-[#EAF4F1] rounded-[3rem] overflow-hidden shadow-xl border border-[#4A9D84]/10">
+            <div class="grid lg:grid-cols-2">
+                
+                <div class="p-8 md:p-16 lg:p-20 flex flex-col justify-center  text-white" style="background-image: url('image//cv11.webp' ); background-repeat: no-repeat; background-position: center; background-size: cover;">
+                    
+                </div>
+
+                <div class="p-8 md:p-12 lg:p-16 bg-white">
+                    <div class="mb-10">
+                        <h3 class="serif-title text-5xl text-[#093a2c] mb-2">Start Your Journey</h3>
+                        <p class="text-gray-500">Tell us a bit about your masterpiece.</p>
+                    </div>
+
+                    <form class="space-y-6" onsubmit="event.preventDefault();">
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-[#093a2c] mb-4">I am writing...</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" class="px-5 py-2 rounded-full text-xs font-bold border-2 border-[#093a2c] bg-[#093a2c] text-white transition-all">Fiction</button>
+                                    <button type="button" class="px-5 py-2 rounded-full text-xs font-bold border-2 border-gray-200 text-gray-500 hover:border-[#093a2c] transition-all">Biography</button>
+                                    <button type="button" class="px-5 py-2 rounded-full text-xs font-bold border-2 border-gray-200 text-gray-500 hover:border-[#093a2c] transition-all">Business</button>
+                                    <button type="button" class="px-5 py-2 rounded-full text-xs font-bold border-2 border-gray-200 text-gray-500 hover:border-[#093a2c] transition-all">Poetry</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-[#093a2c] mb-4">My Goal is...</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="cursor-pointer border-2 border-[#093a2c] bg-[#EAF4F1] p-4 rounded-2xl text-center group transition-all">
+                                        <p class="text-sm font-bold text-[#4A9D84]">Self-Publishing</p>
+                                        <p class="text-[10px] text-[#4A9D84]/70">Full Creative Control</p>
+                                    </div>
+                                    <div class="cursor-pointer border-2 border-gray-100 p-4 rounded-2xl text-center hover:border-[#4A9D84] transition-all group">
+                                        <p class="text-sm font-bold text-gray-700 group-hover:text-[#4A9D84]">Traditional Path</p>
+                                        <p class="text-[10px] text-gray-400">Ready for Agents</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Pen Name</label>
+                                <input type="text" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:border-[#4A9D84] focus:ring-1 focus:ring-[#4A9D84] focus:outline-none transition" placeholder="Sy Amor">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Email</label>
+                                <input type="email" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:border-[#4A9D84] focus:ring-1 focus:ring-[#4A9D84] focus:outline-none transition" placeholder="author@write.com">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Password</label>
+                            <input type="password" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:border-[#4A9D84] focus:ring-1 focus:ring-[#4A9D84] focus:outline-none transition" placeholder="••••••••">
+                        </div>
+
+                        <button class="w-full bg-[#093a2c] text-white font-black uppercase tracking-widest py-5 rounded-2xl mt-4 hover:bg-[#093a2c] transition-all transform hover:-translate-y-1 shadow-xl">
+                            Begin My Publication
+                        </button>
+
+                        <p class="text-center text-xs text-gray-400">
+                            Already a member? <a href="#" class="text-[#4A9D84] font-bold hover:underline">Log In</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+     <!-- end -->
+<section class="relative min-h-screen flex items-center overflow-hidden px-6 lg:px-20 py-20">
+        
+        <div class="absolute top-1/2 -right-20 transform -translate-y-1/2 w-[500px] h-[500px] bg-[#EAF4F1] rounded-full -z-10 opacity-70"></div>
+
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+            
+            <div class="space-y-8">
+                <h1 class="serif-title text-4xl md:text-6xl leading-tight">
+                    <span class="text-[#4A9D84]">Elite  Publishing Solutions:</span><br>
+                    <span class="text-[#1A1A1A]">Bringing Your Story to Life!</span>
+                </h1>
+                
+                <p class="text-lg text-gray-600 leading-relaxed max-w-xl">
+                    Owl Publishers understands that every author’s path is one of a kind. From the 
+                    first spark of inspiration to the excitement of holding your finished book, we are 
+                    by your side every step of the way. Our comprehensive services ensure your 
+                    manuscript is refined, expertly published, and reaches the right readers.
+                </p>
+
+                <div class="flex flex-wrap gap-4">
+                    <a href="#" class="group flex items-center gap-3 bg-[#1A1A1A] text-white px-8 py-4 rounded-full font-medium transition-all hover:bg-[#4A9D84]">
+                        Get Started
+                        <div class="bg-[#4A9D84] p-1 rounded-full group-hover:bg-white group-hover:text-[#4A9D84] transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </div>
+                    </a>
+
+                    <a href="#" class="flex items-center gap-3 border-2 border-[#1A1A1A] px-8 py-4 rounded-full font-medium hover:bg-[#093a2c] transition-all">
+                        Discuss Now
+                        <span class="text-xl"></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="relative flex justify-center lg:justify-end">
+                <div class="absolute inset-0 bg-[#093a2c]   rounded-full"></div>
+                
+                <div class="relative transform rotate-[-5deg] hover:rotate-0 transition-transform duration-500 cursor-pointer">
+                    <img src="image/cv9.png" 
+                         alt="Book Mockup" 
+                         class="rounded-r-lg shadow-2xl max-w-full h-auto border-l-4 border-gray-800">
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <!-- slider  -->
+     <section class="py-20 bg-[#FFFFFF] overflow-hidden">       
+    <div class="max-w-7xl mx-auto px-6 mb-12 text-center">
+        <h2 class="serif-title text-4xl md:text-5xl lg:text-6xl text-[#1A1A1A]">
+            Get Your <span class="text-[#0a5e46]">Book Noticed</span> By Readers
+        </h2>
+        <p class="mt-4 text-gray-500 max-w-2xl mx-auto">
+            Join the ranks of best-selling authors who trusted Owl's Publishing to bring their vision to the global stage.
+        </p>
+    </div>
+
+    <div class="relative flex overflow-x-hidden group">
+        <div class="flex whitespace-nowrap animate-scroll pause-on-hover">
+            
+            <div class="flex gap-8 px-4">
+                <img src="image/c10.png" alt="Book 1" class="w-[250px] h-[350px] object-cover rounded-lg shadow-xl hover:scale-105 transition-transform">
+                <img src="image/cv8.png" alt="Book 2" class="w-[250px] h-[350px] object-cover rounded-lg shadow-xl hover:scale-105 transition-transform">
+                <img src="image/cv6.png" alt="Book 3" class="w-[250px] h-[350px] object-cover rounded-lg shadow-xl hover:scale-105 transition-transform">
+                <img src="image/cv7.png" alt="Book 4" class="w-[250px] h-[350px] object-cover rounded-lg shadow-xl hover:scale-105 transition-transform">
+                <img src="image/cv9.png" alt="Book 5" class="w-[250px] h-[350px] object-cover rounded-lg shadow-xl hover:scale-105 transition-transform">
+                <img src="image/cv5.png" alt="Book 5" class="w-[250px] h-[350px] object-cover rounded-lg shadow-xl hover:scale-105 transition-transform">
+                <img src="image/cv4.png" alt="Book 5" class="w-[250px] h-[350px] object-cover rounded-lg shadow-xl hover:scale-105 transition-transform">
+                <img src="image/cv3.png" alt="Book 5" class="w-[250px] h-[350px] object-cover rounded-lg shadow-xl hover:scale-105 transition-transform">
+                <img src="image/cv1.png" alt="Book 5" class="w-[250px] h-[350px] object-cover rounded-lg shadow-xl hover:scale-105 transition-transform">
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Custom Animation for Infinite Scroll */
+    @keyframes scroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+
+    .animate-scroll {
+        display: flex;
+        width: max-content;
+        animation: scroll 30s linear infinite;
+    }
+
+    /* Pause scrolling when user hovers to look at a book */
+    .pause-on-hover:hover {
+        animation-play-state: paused;
+    }
+
+    /* Adding a gradient fade to the edges of the slider for a premium look */
+    #auth-section::before, #auth-section::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 150px;
+        height: 100%;
+        z-index: 2;
+    }
+</style>
+    <!-- Expertise Section -->
+   <section id="services" class="py-32 bg-[#FFFFFF]">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+            <div class="max-w-xl">
+                <h2 class="serif-title text-5xl md:text-6xl mb-6 italic text-[#0a5e46]">Full-Circle Publishing.</h2>
+                <p class="text-gray-500 text-lg">We take your raw manuscript and refine it until it's indistinguishable from the giants in the industry.</p>
+            </div>
+            <div class="text-[#0a5e46] font-black text-8xl opacity-50 hidden md:block">01—06</div>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            
+            <div class="group relative bg-[#EAF4F1] p-12 overflow-hidden hover:bg-[#0a5e46] transition-all duration-500 min-h-[420px] flex flex-col justify-between rounded-3xl cursor-pointer">
+                <div class="z-10">
+                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:bg-[#EAF4F1] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-[#4A9D84]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                    <h3 class="serif-title text-3xl mb-4 text-[#1A1A1A] group-hover:text-white transition">Book Cover Design</h3>
+                    <p class="text-gray-600 group-hover:text-white/80 transition">Custom illustrations and typography that define your brand and capture imagination.</p>
+                </div>
+                <div class="z-10 group-hover:text-white font-bold uppercase text-xs tracking-widest flex items-center">
+                    Visual Identity <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                </div>
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/20 rounded-full group-hover:scale-[5] transition-transform duration-700"></div>
+            </div>
+
+            <div class="group relative bg-[#EAF4F1] p-12 overflow-hidden hover:bg-[#4A9D84] transition-all duration-500 min-h-[420px] flex flex-col justify-between rounded-3xl cursor-pointer">
+                <div class="z-10">
+                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:bg-[#EAF4F1] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-[#4A9D84]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                    </div>
+                    <h3 class="serif-title text-3xl mb-4 text-[#1A1A1A] group-hover:text-white transition">Book Editing</h3>
+                    <p class="text-gray-600 group-hover:text-white/80 transition">Structural, line, and copy editing to ensure your voice is heard clearly and correctly.</p>
+                </div>
+                <div class="z-10 group-hover:text-white font-bold uppercase text-xs tracking-widest flex items-center">
+                    Refine Voice <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                </div>
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/20 rounded-full group-hover:scale-[5] transition-transform duration-700"></div>
+            </div>
+
+            <div class="group relative bg-[#EAF4F1] p-12 overflow-hidden hover:bg-[#4A9D84] transition-all duration-500 min-h-[420px] flex flex-col justify-between rounded-3xl cursor-pointer">
+                <div class="z-10">
+                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:bg-[#EAF4F1] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-[#4A9D84]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                    </div>
+                    <h3 class="serif-title text-3xl mb-4 text-[#1A1A1A] group-hover:text-white transition">Book Formatting</h3>
+                    <p class="text-gray-600 group-hover:text-white/80 transition">Professional typesetting for E-books and Print, with perfect margins and drop caps.</p>
+                </div>
+                <div class="z-10 group-hover:text-white font-bold uppercase text-xs tracking-widest flex items-center">
+                    Interior Specs <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                </div>
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/20 rounded-full group-hover:scale-[5] transition-transform duration-700"></div>
+            </div>
+
+            <div class="group relative bg-[#EAF4F1] p-12 overflow-hidden hover:bg-[#4A9D84] transition-all duration-500 min-h-[420px] flex flex-col justify-between rounded-3xl cursor-pointer">
+                <div class="z-10">
+                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:bg-[#EAF4F1] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-[#4A9D84]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                    </div>
+                    <h3 class="serif-title text-3xl mb-4 text-[#1A1A1A] group-hover:text-white transition">Book Publishing</h3>
+                    <p class="text-gray-600 group-hover:text-white/80 transition">We handle KDP, IngramSpark, and global distribution so you can focus on writing.</p>
+                </div>
+                <div class="z-10 group-hover:text-white font-bold uppercase text-xs tracking-widest flex items-center">
+                    Launch Ready <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                </div>
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/20 rounded-full group-hover:scale-[5] transition-transform duration-700"></div>
+            </div>
+
+            <div class="group relative bg-[#EAF4F1] p-12 overflow-hidden hover:bg-[#4A9D84] transition-all duration-500 min-h-[420px] flex flex-col justify-between rounded-3xl cursor-pointer">
+                <div class="z-10">
+                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:bg-[#EAF4F1] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-[#4A9D84]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.167a2.45 2.45 0 00-1.042-1.357 2.45 2.45 0 01-1.12-1.637V8.544a2.45 2.45 0 011.12-1.637 2.45 2.45 0 001.042-1.357l2.147-6.167A1.76 1.76 0 0111 5.882z" /></svg>
+                    </div>
+                    <h3 class="serif-title text-3xl mb-4 text-[#1A1A1A] group-hover:text-white transition">Book Marketing</h3>
+                    <p class="text-gray-600 group-hover:text-white/80 transition">Strategic ad campaigns and social media buzz to get your book into the hands of readers.</p>
+                </div>
+                <div class="z-10 group-hover:text-white font-bold uppercase text-xs tracking-widest flex items-center">
+                    Get Noticed <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                </div>
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/20 rounded-full group-hover:scale-[5] transition-transform duration-700"></div>
+            </div>
+
+            <div class="group relative bg-[#EAF4F1] p-12 overflow-hidden hover:bg-[#4A9D84] transition-all duration-500 min-h-[420px] flex flex-col justify-between rounded-3xl cursor-pointer">
+                <div class="z-10">
+                    <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm group-hover:bg-[#EAF4F1] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-[#4A9D84]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+                    </div>
+                    <h3 class="serif-title text-3xl mb-4 text-[#1A1A1A] group-hover:text-white transition">Author Website</h3>
+                    <p class="text-gray-600 group-hover:text-white/80 transition">A professional digital home to showcase your portfolio, collect emails, and sell direct.</p>
+                </div>
+                <div class="z-10 group-hover:text-white font-bold uppercase text-xs tracking-widest flex items-center">
+                    Build Brand <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                </div>
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/20 rounded-full group-hover:scale-[5] transition-transform duration-700"></div>
+            </div>
+
+        </div>
+    </div>
+</section>
+ <!-- paclage -->
+    <section id="packages" class="py-32 reveal">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl italic mb-4">Investment Tiers</h2>
+                <p class="text-gray-500 uppercase text-[10px] font-black tracking-widest">Find your perfect path to publication</p>
+            </div>
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Basic -->
+                <div class="bg-white p-12 rounded-[2rem] border border-black/5 hover:border-teal-brand/30 transition-all">
+                    <span class="text-teal-brand font-black text-[10px] tracking-widest uppercase mb-4 block">E-Book Essential</span>
+                    <h3 class="text-5xl font-bold mb-8">$299</h3>
+                    <ul class="space-y-4 mb-12 text-gray-600">
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-3 text-teal-brand"></i> Kindle Formatting</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-3 text-teal-brand"></i> Custom Digital Cover</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-3 text-teal-brand"></i> KDP Metadata Help</li>
+                    </ul>
+                    <button onclick="openAuthModal()" class="w-full py-4 border border-black rounded-full font-bold hover:bg-black hover:text-white transition">Get Started</button>
+                </div>
+                <!-- Pro -->
+                <div class="bg-black p-12 rounded-[2.5rem] text-white scale-105 shadow-3xl">
+                    <span class="text-teal-brand font-black text-[10px] tracking-widest uppercase mb-4 block">Author Pro</span>
+                    <h3 class="text-5xl font-bold mb-8">$699</h3>
+                    <ul class="space-y-4 mb-12">
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-3"></i> Full Print & Digital Layout</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-3"></i> Custom Illustration Cover</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-3"></i> 3D Marketing Mockups</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-3"></i> Dedicated Account Lead</li>
+                    </ul>
+                    <button onclick="openAuthModal()" class="w-full py-4 bg-teal-brand rounded-full font-bold hover:bg-white hover:text-black transition">Choose Popular</button>
+                </div>
+                <!-- Premium -->
+                <div class="bg-white p-12 rounded-[2rem] border border-black/5 hover:border-teal-brand/30 transition-all">
+                    <span class="text-teal-brand font-black text-[10px] tracking-widest uppercase mb-4 block">Elite Global</span>
+                    <h3 class="text-5xl font-bold mb-8">$1,299</h3>
+                    <ul class="space-y-4 mb-12 text-gray-600">
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-3 text-teal-brand"></i> Global ISBN Registration</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-3 text-teal-brand"></i> IngramSpark Distribution</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-3 text-teal-brand"></i> Author Web Presence</li>
+                    </ul>
+                    <button onclick="openAuthModal()" class="w-full py-4 border border-black rounded-full font-bold hover:bg-black hover:text-white transition">Inquire Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+ <!-- Testimonials -->
+    <section id="reviews" class="py-32 bg-white/50 reveal">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-20 space-y-8 md:space-y-0">
+                <h2 class="text-5xl italic text-black">Author Voices</h2>
+                <div class="flex space-x-4">
+                    <button onclick="prevReview()" class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition">
+                        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                    </button>
+                    <button onclick="nextReview()" class="p-4 rounded-full border border-black/10 hover:bg-black hover:text-white transition">
+                        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-hidden">
+                <div class="testimonial-slider" id="review-track">
+                    <div class="min-w-full md:min-w-[50%] px-4">
+                        <div class="bg-white p-16 rounded-[2rem] shadow-sm border border-black/5">
+                            <p class="text-2xl italic mb-10 text-gray-800">"Elite Publishing transformed my raw manuscript into a professional book that looks like it belongs on the front shelf of Barnes & Noble."</p>
+                            <div class="flex items-center space-x-4">
+                                <div class="w-14 h-14 bg-teal-brand rounded-full"></div>
+                                <div>
+                                    <h4 class="font-bold text-black">Sarah Jennings</h4>
+                                    <p class="text-xs text-teal-brand font-black uppercase tracking-widest">Mystery Novelist</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[50%] px-4">
+                        <div class="bg-white p-16 rounded-[2rem] shadow-sm border border-black/5">
+                            <p class="text-2xl italic mb-10 text-gray-800">"The KDP integration was seamless. I didn't have to touch a single technical file, and my book went live worldwide overnight."</p>
+                            <div class="flex items-center space-x-4">
+                                <div class="w-14 h-14 bg-gray-200 rounded-full"></div>
+                                <div>
+                                    <h4 class="font-bold text-black">Robert Thorne</h4>
+                                    <p class="text-xs text-teal-brand font-black uppercase tracking-widest">Business Author</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- faq -->
+<section id="faq" class="py-32 bg-[#FFFFFF]">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid lg:grid-cols-3 gap-16">
+            
+            <div class="lg:col-span-1">
+                <span class="text-[#4A9D84] font-black uppercase text-xs tracking-[0.3em] mb-4 block">Information Desk</span>
+                <h2 class="serif-title text-5xl md:text-6xl text-[#1A1A1A] leading-tight mb-8">
+                    Frequently <br> Asked <br> <span class="italic text-[#0a5e46]">Questions.</span>
+                </h2>
+                <p class="text-gray-500 mb-8">
+                    Everything you need to know about the journey from manuscript to masterpiece. Can't find what you're looking for? 
+                </p>
+                <a href="#" class="inline-flex items-center text-[#1A1A1A] font-bold border-b-2 border-[#4A9D84] pb-1 hover:text-[#4A9D84] transition-colors">
+                    Contact our agents
+                </a>
+            </div>
+
+            <div class="lg:col-span-2 space-y-4">
+                
+                <div class="group border border-gray-100 rounded-3xl overflow-hidden hover:border-[#4A9D84]/30 transition-all">
+                    <details class="group">
+                        <summary class="flex justify-between items-center p-8 cursor-pointer list-none bg-[#EAF4F1]/30 group-hover:bg-[#EAF4F1] transition-colors">
+                            <span class="text-xl font-bold text-[#1A1A1A]">What does publishing a book involve?</span>
+                            <span class="transition group-open:rotate-180 bg-[#4A9D84] text-white p-2 rounded-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="p-8 text-gray-600 leading-relaxed bg-white">
+                            It’s a multi-step journey: professional editing, creative cover design, interior formatting, and global distribution. We handle the technical heavy lifting so you can focus on your creative vision.
+                        </div>
+                    </details>
+                </div>
+
+                <div class="group border border-gray-100 rounded-3xl overflow-hidden hover:border-[#4A9D84]/30 transition-all">
+                    <details class="group">
+                        <summary class="flex justify-between items-center p-8 cursor-pointer list-none bg-[#EAF4F1]/30 group-hover:bg-[#EAF4F1] transition-colors">
+                            <span class="text-xl font-bold text-[#1A1A1A]">What Types of Books Do We Publish?</span>
+                            <span class="transition group-open:rotate-180 bg-[#4A9D84] text-white p-2 rounded-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="p-8 text-gray-600 leading-relaxed bg-white">
+                            We publish across all genres—from fiction and poetry to business guides and memoirs. If you have a story worth telling, we have a way to publish it.
+                        </div>
+                    </details>
+                </div>
+
+                <div class="group border border-gray-100 rounded-3xl overflow-hidden hover:border-[#4A9D84]/30 transition-all">
+                    <details class="group">
+                        <summary class="flex justify-between items-center p-8 cursor-pointer list-none bg-[#EAF4F1]/30 group-hover:bg-[#EAF4F1] transition-colors">
+                            <span class="text-xl font-bold text-[#1A1A1A]">What’s an ISBN?</span>
+                            <span class="transition group-open:rotate-180 bg-[#4A9D84] text-white p-2 rounded-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="p-8 text-gray-600 leading-relaxed bg-white">
+                            An ISBN (International Standard Book Number) is your book's unique fingerprint. It allows bookstores, libraries, and retailers to identify and track your book globally.
+                        </div>
+                    </details>
+                </div>
+
+                <div class="group border border-gray-100 rounded-3xl overflow-hidden hover:border-[#4A9D84]/30 transition-all">
+                    <details class="group">
+                        <summary class="flex justify-between items-center p-8 cursor-pointer list-none bg-[#EAF4F1]/30 group-hover:bg-[#EAF4F1] transition-colors">
+                            <span class="text-xl font-bold text-[#1A1A1A]">How can I get help with marketing my book?</span>
+                            <span class="transition group-open:rotate-180 bg-[#4A9D84] text-white p-2 rounded-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="p-8 text-gray-600 leading-relaxed bg-white">
+                            Our marketing team helps build your author brand, setup ad campaigns, and create high-converting sales pages on major retail platforms.
+                        </div>
+                    </details>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- banner -->
+          <section class="py-24 px-6 bg-white">
+        <div class="max-w-7xl mx-auto bg-teal-brand rounded-[3rem] p-12 md:p-24 text-white relative overflow-hidden shadow-2xl shadow-teal-900/20">
+            <div class="relative z-10 text-center">
+                <h2 class="text-5xl md:text-7xl mb-8 leading-tight">Ready to see your name <br>on the <span class="italic">Best Seller</span> list?</h2>
+                <button onclick="openAuthModal('signup')" class="bg-white text-teal-brand px-12 py-6 rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition shadow-2xl">Start My Project</button>
+            </div>
+            <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-black/5 rounded-full -translate-x-1/2 translate-y-1/2"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-black/5 pt-24 pb-12 reveal">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-16 mb-20">
+                <div class="col-span-2">
+                    <div class="flex items-center space-x-3 mb-8">
+                        <div class="w-10 h-10 bg-black flex items-center justify-center text-white font-serif italic text-xl">E</div>
+                        <span class="font-bold text-xl tracking-tight text-black uppercase">Elite Publishing</span>
+                    </div>
+                    <p class="text-gray-500 max-w-sm leading-relaxed">The global choice for authors seeking high-end book design, professional interior formatting, and seamless technical distribution.</p>
+                </div>
+                <div>
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.2em] mb-8 text-black">Exploration</h4>
+                    <ul class="space-y-4 text-sm text-gray-500 font-medium">
+                        <li><a href="#services" class="hover:text-teal-brand transition">Services</a></li>
+                        <li><a href="#packages" class="hover:text-teal-brand transition">Pricing</a></li>
+                        <li><a href="#reviews" class="hover:text-teal-brand transition">Reviews</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.2em] mb-8 text-black">Support</h4>
+                    <ul class="space-y-4 text-sm text-gray-500 font-medium">
+                        <li><a href="#" class="hover:text-teal-brand transition">KDP Assistance</a></li>
+                        <li><a href="#" class="hover:text-teal-brand transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-teal-brand transition">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-black/5 pt-12 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                <span>&copy; 2026 Elite Publishing. All Rights Reserved.</span>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-black">Twitter</a>
+                    <a href="#" class="hover:text-black">Instagram</a>
+                    <a href="#" class="hover:text-black">LinkedIn</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-lg p-12 rounded-[2rem] relative shadow-3xl">
+            <button onclick="closeAuthModal()" class="absolute top-10 right-10 text-gray-400 hover:text-black">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <h3 class="text-4xl italic mb-8 text-center text-black">Begin Your Journey</h3>
+            <div class="space-y-4">
+                <input type="text" placeholder="Full Name" class="w-full bg-gray-50 rounded-xl p-5 border border-black/5 outline-none focus:border-teal-brand transition">
+                <input type="email" placeholder="Email Address" class="w-full bg-gray-50 rounded-xl p-5 border border-black/5 outline-none focus:border-teal-brand transition">
+                <button class="w-full bg-black text-white font-black py-5 rounded-2xl shadow-xl transition-transform hover:scale-[1.02]">Create Account</button>
+                <p class="text-[10px] text-center text-gray-400 mt-4 tracking-widest uppercase">Elite Standards Guaranteed</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Background Slider Logic
+        let currentImgIdx = 0;
+        const heroSlides = document.querySelectorAll('.hero-image-slide');
+        function rotateHeroImages() {
+            heroSlides[currentImgIdx].classList.remove('active');
+            currentImgIdx = (currentImgIdx + 1) % heroSlides.length;
+            heroSlides[currentImgIdx].classList.add('active');
+        }
+        setInterval(rotateHeroImages, 6000);
+
+        // Scroll Animations
+        function reveal() {
+            const reveals = document.querySelectorAll(".reveal");
+            reveals.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < window.innerHeight - 100) el.classList.add("active");
+            });
+        }
+        window.addEventListener("scroll", reveal);
+        window.onload = reveal;
+
+        // Auto-slider for Books
+        const slider = document.getElementById('auto-slider');
+        let scrollPos = 0;
+        function animateSlider() {
+            scrollPos += 0.4;
+            if (scrollPos >= slider.scrollWidth / 2) scrollPos = 0;
+            slider.style.transform = `translateX(-${scrollPos}px)`;
+            requestAnimationFrame(animateSlider);
+        }
+        animateSlider();
+
+        // Testimonial Logic
+        let reviewIdx = 0;
+        const reviewTrack = document.getElementById('review-track');
+        function updateSlider() {
+            const width = window.innerWidth >= 768 ? 50 : 100;
+            reviewTrack.style.transform = `translateX(-${reviewIdx * width}%)`;
+        }
+        function nextReview() { reviewIdx = (reviewIdx + 1) % 2; updateSlider(); }
+        function prevReview() { reviewIdx = (reviewIdx - 1 + 2) % 2; updateSlider(); }
+
+        function openAuthModal() { $('#auth-modal').fadeIn(300).css('display', 'flex'); }
+        function closeAuthModal() { $('#auth-modal').fadeOut(200); }
+
+        // Sticky Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.elite-header');
+            if (window.scrollY > 50) {
+                header.style.height = '70px';
+                header.style.boxShadow = '0 10px 30px rgba(0,0,0,0.05)';
+            } else {
+                header.style.height = '80px';
+                header.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
